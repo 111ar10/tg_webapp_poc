@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Telegram POC</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+      body{font-family:sans-serif;text-align:center;margin-top:30%;}
+      button{font-size:20px;padding:10px 25px;}
+  </style>
+</head>
+<body>
+  <h2>👉 Web-App POC</h2>
+  <button id="send">Send “Hello”</button>
+
+  <script>
+    const tg = window.Telegram.WebApp;     // API object
+    tg.expand();                           // optional, open to full height
+
+    document.getElementById('send').onclick = () => {
+      // any string is fine – here we send JSON for demo purposes
+      tg.sendData(JSON.stringify({msg: 'Hello from the Web-App!'}));
+      tg.close();                          // close the webview (optional)
+    };
+  </script>
+</body>
+</html>
