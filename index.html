@@ -1,27 +1,68 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Telegram POC</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-      body{font-family:sans-serif;text-align:center;margin-top:30%;}
-      button{font-size:20px;padding:10px 25px;}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebApp Test</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: var(--tg-theme-bg-color, #fff);
+            color: var(--tg-theme-text-color, #000);
+        }
+        button {
+            background: var(--tg-theme-button-color, #0088cc);
+            color: var(--tg-theme-button-text-color, #fff);
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+        #debug {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
 </head>
 <body>
-  <h2>👉 Web-App POC</h2>
-  <button id="send">Send “Hello”</button>
+    <h1>WebApp POC</h1>
+    <button id="sendBtn">Send Data</button>
+    <div id="debug"></div>
 
-  <script>
-    const tg = window.Telegram.WebApp;     // API object
-    tg.expand();                           // optional, open to full height
-
-    document.getElementById('send').onclick = () => {
-      // any string is fine – here we send JSON for demo purposes
-      tg.sendData(JSON.stringify({msg: 'Hello from the Web-App!'}));
-      tg.close();                          // close the webview (optional)
-    };
-  </script>
+    <script>
+        const tg = window.Telegram.WebApp;
+        const debugDiv = document.getElementById('debug');
+        
+        function log(msg) {
+            debugDiv.innerHTML += msg + '\n';
+            console.log(msg);
+        }
+        
+        // Debug info
+        log('WebApp initialized');
+        log('Version: ' + tg.version);
+        log('Platform: ' + tg.platform);
+        log('initData: ' + tg.initData);
+        
+        tg.expand();
+        tg.ready();
+        log('WebApp ready');
+        
+        document.getElementById('sendBtn').addEventListener('click', () => {
+            const data = 'Hello from WebApp at ' + new Date().toISOString();
+            log('Sending: ' + data);
+            tg.sendData(data);
+            log('Data sent!');
+        });
+    </script>
 </body>
 </html>
