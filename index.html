@@ -3,43 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebApp Test</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Telegram Web App Test</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
             margin: 0;
-            background: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
-        h2 {
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
             margin-top: 0;
+            font-size: 24px;
         }
-        #log {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f0f0f0;
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
             border-radius: 8px;
-            white-space: pre-wrap;
-            font-size: 11px;
-            font-family: monospace;
-            max-height: 400px;
-            overflow-y: auto;
+            cursor: pointer;
+            width: 100%;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            font-size: 14px;
         }
         .info {
-            background: #e3f2fd;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-            font-size: 14px;
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    
-    <script>                                                                                                                                                                                              
-    window.Telegram.WebApp.sendData("SNADO");                                                                                                                                                             
+    <div class="container">
+        <h1>🚀 Telegram Web App Test</h1>
+        <p>Testing WebApp.sendData() functionality</p>
+        
+        <button onclick="sendSimpleData()">Send Simple Data</button>
+        <button onclick="sendJsonData()">Send JSON Data</button>
+        <button onclick="sendTimestamp()">Send Timestamp</button>
+        
+        <div id="status">
+            <strong>Status:</strong> Ready
+        </div>
+        
+        <div class="info">
+            WebApp Version: <span id="version">Loading...</span><br>
+            Platform: <span id="platform">Loading...</span>
+        </div>
+    </div>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        const tg = window.Telegram.WebApp;
+        
+        // Initialize
+        tg.ready();
+        tg.expand();
+        
+        // Display info
+        document.getElementById('version').textContent = tg.version || 'Unknown';
+        document.getElementById('platform').textContent = tg.platform || 'Unknown';
+        
+        function updateStatus(message) {
+            document.getElementById('status').innerHTML = '<strong>Status:</strong> ' + message;
+        }
+        
+        function sendSimpleData() {
+            try {
+                const data = "SNADO";
+                tg.sendData(data);
+                updateStatus('✅ Sent: "' + data + '"');
+            } catch (error) {
+                updateStatus('❌ Error: ' + error.message);
+            }
+        }
+        
+        function sendJsonData() {
+            try {
+                const data = JSON.stringify({
+                    action: "test",
+                    timestamp: Date.now(),
+                    user: tg.initDataUnsafe?.user?.id || "unknown"
+                });
+                tg.sendData(data);
+                updateStatus('✅ Sent JSON data');
+            } catch (error) {
+                updateStatus('❌ Error: ' + error.message);
+            }
+        }
+        
+        function sendTimestamp() {
+            try {
+                const data = "Timestamp: " + new Date().toISOString();
+                tg.sendData(data);
+                updateStatus('✅ Sent: ' + data);
+            } catch (error) {
+                updateStatus('❌ Error: ' + error.message);
+            }
+        }
+        
+        // Auto-send on load (for quick testing)
+        setTimeout(() => {
+            updateStatus('Auto-sending data in 2 seconds...');
+            setTimeout(() => {
+                sendSimpleData();
+            }, 2000);
+        }, 1000);
+        
+        console.log('Telegram WebApp initialized:', tg);
     </script>
 </body>
 </html>
