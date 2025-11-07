@@ -6,28 +6,41 @@
     <title>WebApp Test</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { padding: 20px; font-family: Arial; }
-        button { 
-            padding: 20px; 
-            font-size: 18px; 
-            width: 100%; 
-            background: #0088cc; 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+            background: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
         }
-        #log { 
-            margin-top: 20px; 
-            padding: 10px; 
-            background: #f0f0f0; 
-            white-space: pre-wrap; 
-            font-size: 12px;
+        h2 {
+            margin-top: 0;
+        }
+        #log {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            font-size: 11px;
+            font-family: monospace;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
-    <h2>WebApp Test</h2>
-    <button onclick="sendData()">Send Data</button>
+    <h2>🚀 WebApp POC</h2>
+    <div class="info">
+        Click the button at the bottom of the screen to send data to the bot.
+    </div>
     <div id="log"></div>
 
     <script>
@@ -35,28 +48,58 @@
         const log = document.getElementById('log');
         
         function addLog(msg) {
-            log.innerHTML += new Date().toLocaleTimeString() + ': ' + msg + '\n';
+            const time = new Date().toLocaleTimeString();
+            log.innerHTML += `[${time}] ${msg}\n`;
+            console.log(msg);
         }
         
-        addLog('WebApp loaded');
+        addLog('🟢 WebApp initializing...');
         addLog('Version: ' + tg.version);
         addLog('Platform: ' + tg.platform);
-        addLog('Init data available: ' + (tg.initData ? 'YES' : 'NO'));
+        addLog('Color Scheme: ' + tg.colorScheme);
         
+        // Expand to full height
         tg.expand();
-        tg.ready();
-        addLog('WebApp ready');
+        addLog('✅ WebApp expanded');
         
-        function sendData() {
+        // Setup the MainButton
+        tg.MainButton.setText('Send Data to Bot');
+        tg.MainButton.show();
+        addLog('✅ MainButton configured and shown');
+        
+        // Handle MainButton click
+        tg.MainButton.onClick(function() {
+            addLog('🔵 MainButton clicked!');
+            
+            // Show loading state
+            tg.MainButton.showProgress();
+            tg.MainButton.disable();
+            
             try {
-                const testData = 'TEST_' + Date.now();
-                addLog('Attempting to send: ' + testData);
-                tg.sendData(testData);
-                addLog('sendData() called successfully');
-            } catch (e) {
-                addLog('ERROR: ' + e.message);
+                const data = JSON.stringify({
+                    message: 'Hello from WebApp!',
+                    timestamp: new Date().toISOString(),
+                    platform: tg.platform
+                });
+                
+                addLog('📤 Sending data: ' + data);
+                tg.sendData(data);
+                addLog('✅ Data sent successfully!');
+                
+                // The WebApp will close automatically after sendData
+                
+            } catch (error) {
+                addLog('❌ ERROR: ' + error.message);
+                tg.MainButton.hideProgress();
+                tg.MainButton.enable();
             }
-        }
+        });
+        
+        // Notify Telegram that the WebApp is ready
+        tg.ready();
+        addLog('✅ WebApp ready!');
+        addLog('---');
+        addLog('👆 Click the blue button at the bottom to send data');
     </script>
 </body>
 </html>
